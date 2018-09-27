@@ -62,7 +62,7 @@
     },
 
 
-/*
+    /*
          _             _     _
      ___| |_ __ _ _ __| |_  | |__   ___ _ __ ___ _
     / __| __/ _` | '__| __| | '_ \ / _ \ '__/ _ (_)
@@ -79,7 +79,16 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
-      return true; // fixme
+      var count = 0;
+      for(var i = 0; i < this.attributes[rowIndex].length; i++){
+        if(this.attributes[rowIndex][i] === 1){
+          count++;
+        }
+        if(count === 2){
+          return true;
+        }
+      }
+      return false; // fixme
     },
 
     // test if any rows on this board contain conflicts
@@ -105,6 +114,15 @@
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var count = 0;
+      for(var i = 0; i < this.attributes[colIndex].length; i++){
+        if(this.attributes[i][colIndex] === 1){
+          count++;
+        }
+        if(count === 2){
+          return true;
+        }
+      }
       return false; // fixme
     },
 
@@ -138,16 +156,30 @@
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      var colIndex = 0;
-      var count = 0;
       for(var i = 0; i < this.attributes[0].length-1; i++){
+        var upCount = 0;
         var colIndex = i;
         for(var key in this.attributes){//Looping through rows
-          console.log(key)
           if(this.attributes[key][colIndex] === 1){
-            count++;
+            upCount++;
+          }
+          if(upCount === 2){
+            return true;
           }
           colIndex++;//incrementing column on each row
+        }
+        var downCount = 0;
+        var downIndex = 0;
+        for(var newKey in this.attributes){//Looping through rows
+          if(newKey > i){
+            if(this.attributes[newKey][downIndex] === 1){
+              downCount++;
+            }
+            if(downCount === 2){
+              return true;
+            }
+            downIndex++;//incrementing column on each row
+          }
         }
       }
       return false; // fixme
@@ -165,6 +197,33 @@
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
+      for(var i = 0; i < this.attributes[0].length - 1; i++) {
+        var upCount = 0;
+        var colIndex = this.attributes[0].length - 1 - i;
+        for(var key in this.attributes) {
+          if(this.attributes[key][colIndex] === 1) {
+            upCount++;
+          }
+          if(upCount === 2) {
+            return true;
+          }
+          colIndex--;
+        }
+        var downIndex = this.attributes[0].length - 1;
+        var downCount = 0;
+        for(var newKey in this.attributes) {
+          if(newKey > i){
+            if(this.attributes[newKey][downIndex] === 1) {
+              downCount++;
+            }
+            if(downCount === 2) {
+              return true;
+            }
+            downIndex--;
+          }
+        }
+      }
+
       return false; // fixme
     }
 
