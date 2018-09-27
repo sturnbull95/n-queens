@@ -29,7 +29,7 @@ window.findNRooksSolution = function(n) {
       for(var x = 0; x < n; x++){
         if(i !== startRow && x !== startCol){
           board.togglePiece(i,x);
-          if(board.hasRowConflictAt(i)|| board.hasColConflictAt(x)){
+          if(board.hasAnyRooksConflicts()){
             board.togglePiece(i,x);
           } else{
             count++;
@@ -48,9 +48,8 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0; //fixme
   var board = new Board({n:n});
-  if(n < 2){
-    return 1;
-  }
+
+
   var callOnChildren = function(rowIndex){
     if(rowIndex === n){
       solutionCount++;
@@ -63,6 +62,8 @@ window.countNRooksSolutions = function(n) {
       }
       board.togglePiece(rowIndex,i);
     }
+
+
   };
   callOnChildren(0);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
@@ -71,15 +72,54 @@ window.countNRooksSolutions = function(n) {
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var solution = undefined; //fixme
-  console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
-  return solution;
+  var board = new Board({n:n});
+  if(n === 0 ||  n === 2 ||  n === 3){
+    return board.rows();
+  }
+  var count = 0;
+  for(var y = 0; y < n*n; y++){
+    board = new Board({n:n});
+    var startRow = Math.floor(y/n);
+    var startCol = y%n;
+    board.togglePiece(startRow,startCol);
+    for(var i = 0; i < n; i++){
+      for(var x = 0; x < n; x++){
+        if(i !== startRow && x !== startCol){
+          board.togglePiece(i,x);
+          if(board.hasAnyQueensConflicts()){
+            board.togglePiece(i,x);
+          } else{
+            count++;
+          }
+        }
+      }
+    }
+  }
+  return board.rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  var solutionCount = 0; //fixme
+  var board = new Board({n:n});
 
+
+  var callOnChildren = function(rowIndex){
+    if(rowIndex === n){
+      solutionCount++;
+      return;
+    }
+    for(var i = 0; i < n; i++){//LOOPS THROUGH COLUMNS
+      board.togglePiece(rowIndex,i);
+      if(!board.hasAnyQueensConflicts()){
+        callOnChildren(rowIndex+1);
+      }
+      board.togglePiece(rowIndex,i);
+    }
+
+
+  };
+  callOnChildren(0);
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };

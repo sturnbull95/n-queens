@@ -129,7 +129,10 @@
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
       var colIndex = 0;
-      for(var i = 0; i < this.attributes[0].length; i++){
+      if(this.get('n') === 0){
+        return false;
+      }
+      for(var i = 0; i < this.get('n'); i++){
         var count = 0;
         for(var key in this.attributes){
           if(this.attributes[key][colIndex] === 1){
