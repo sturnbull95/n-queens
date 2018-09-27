@@ -19,11 +19,10 @@ window.findNRooksSolution = function(n) {
   var board = new Board({n:n});
   //console.log(board);
   var count = 1;
-  for(var y = 0; y < n*n; y++){
+  for(var y = 0; y < n; y++){
     board = new Board({n:n});
     var startRow = Math.floor(y/n);
     var startCol = y%n;
-    //console.log(startRow,startCol)
     board.togglePiece(startRow,startCol);
     for(var i = 0; i < n; i++){
       for(var x = 0; x < n; x++){
@@ -48,19 +47,21 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = 0; //fixme
   var board = new Board({n:n});
-
-
-  var callOnChildren = function(rowIndex){
+  var currentRows = []
+  for(var i = 0; i < n; i++){
+    currentRows[i] = i;
+  }
+  var callOnChildren = function(rowIndex,possibleRows){
     if(rowIndex === n){
       solutionCount++;
       return;
     }
     for(var i = 0; i < n; i++){//LOOPS THROUGH COLUMNS
-      board.togglePiece(rowIndex,i);
-      if(!board.hasAnyRooksConflicts()){
-        callOnChildren(rowIndex+1);
-      }
-      board.togglePiece(rowIndex,i);
+        board.togglePiece(rowIndex,i);
+        if(!board.hasAnyRooksConflicts()){
+          callOnChildren(rowIndex+1);
+        }
+        board.togglePiece(rowIndex,i);
     }
 
 
@@ -77,7 +78,7 @@ window.findNQueensSolution = function(n) {
     return board.rows();
   }
   var count = 0;
-  for(var y = 0; y < n*n; y++){
+  for(var y = 0; y < n; y++){
     board = new Board({n:n});
     var startRow = Math.floor(y/n);
     var startCol = y%n;
@@ -103,7 +104,9 @@ window.countNQueensSolutions = function(n) {
   var solutionCount = 0; //fixme
   var board = new Board({n:n});
 
-
+  if(n === 2 || n === 3){
+    return 0;
+  }
   var callOnChildren = function(rowIndex){
     if(rowIndex === n){
       solutionCount++;
